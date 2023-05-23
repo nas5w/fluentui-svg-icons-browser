@@ -20,17 +20,19 @@ for (const icon of icons) {
 // Now compute the best image for each
 const iconSet = Object.values(iconMap).map((icon) => {
   const size = icon.sizes.has(28) ? 28 : Math.max(...icon.sizes);
-  const fill = icon.fills.has("regular") ? "regular" : "filled";
-  return { ...icon, src: `${icon.name}_${size}_${fill}.svg` };
+  return { ...icon, src: (f) => `${icon.name}_${size}_${f}.svg` };
 });
 
 export default function App() {
   const [input, setInput] = useState("");
   const [scrolls, setScrolls] = useState(1);
+  const [fill, setFill] = useState("regular");
   const listRef = useRef();
 
-  const filteredIcons = iconSet.filter((icon) =>
-    icon.name.toLowerCase().includes(input.toLowerCase())
+  const filteredIcons = iconSet.filter(
+    (icon) =>
+      icon.fills.has(fill) &&
+      icon.name.toLowerCase().includes(input.toLowerCase())
   );
 
   useEffect(() => {
@@ -50,13 +52,41 @@ export default function App() {
 
   return (
     <div className="App">
-      <input
-        value={input}
-        onChange={(e) => {
-          setInput(e.target.value);
-        }}
-        placeholder="Find icon..."
-      />
+      <header>
+        <div className="controls">
+          <input
+            className="search"
+            value={input}
+            onChange={(e) => {
+              setInput(e.target.value);
+            }}
+            placeholder="Find icon..."
+          />
+          <label>
+            <input
+              name="fills"
+              type="radio"
+              checked={fill === "regular"}
+              onChange={() => {
+                setFill("regular");
+              }}
+            ></input>{" "}
+            Regular
+          </label>
+          <label>
+            <input
+              name="fills"
+              type="radio"
+              checked={fill === "filled"}
+              onChange={() => {
+                setFill("filled");
+              }}
+            ></input>{" "}
+            Filled
+          </label>
+        </div>
+        <h1>@fluentui/svg-icons</h1>
+      </header>
       <ul ref={listRef} className="icon-list">
         {filteredIcons.slice(0, 200 * scrolls).map((icon) => (
           <li key={icon.name}>
@@ -69,7 +99,7 @@ export default function App() {
               </span>
             </div>
             <span>
-              <img src={`/${icon.src}`} loading="lazy" />
+              <img src={`/${icon.src(fill)}`} loading="lazy" />
             </span>
           </li>
         ))}
