@@ -1,0 +1,13 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "node index.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "@fluentui/svg-icons": "^1.1.198"
+  }
+}
